@@ -1,0 +1,124 @@
+Comandos usados practica 1
+
+(En la terminal)
+
+sudo su
+nano /etc/default/grub
+(Se cambio el TIMEOUT a 20)
+
+ctrl + o 
+enter
+ctrl + x
+
+grub2-mkconfig -o /boot/grub2/grub.cfg
+reboot now
+
+(En el menu grub)
+
+e
+ctrl + e (En la linea que empieza con la palabra "Linux")
+rw init=/bin/bash
+ctrl + x 
+
+mount -o remount,rw /sysroot
+chroot /sysroot
+passwd
+touch ./autorelabel
+exec /sbin/reboot -f
+
+(Probando si el cambio fue exitoso)
+
+su
+whoami
+
+============================================
+
+Comandos usados practica 2
+
+nano Adrian.sh
+
+#!/bin/bash
+tar -czvf /home/fred/backup_$(date +-%d-%m-%Y:%H:%M)tar.gz /home/fred
+
+ctrl + o (guardar)
+enter 
+ctrl + x (Salir)
+
+sudo chmod +x Adrian.sh
+
+./Adrian.sh
+
+nano Alcantara.sh
+
+#!/bin/bash
+read -p "Ingrese el nombre del documento: " N; ifconfig > "$HOME/Escritorio/$N" 
+echo "EL archivo $N se ha guardado correctamente."
+
+ctrl + o (guardar)
+enter 
+ctrl + x (Salir)
+
+sudo chmod +x Alcantara.sh
+
+./Alcantara.sh
+
+cat N
+
+============================================
+
+Comandos usados practica 3
+
+(CentOS terminal)
+
+ifconfig
+
+(Windows terminal)
+
+ping 192.168.100.168
+
+(CentOS terminal)
+
+sudo su
+dnf install openssh-server
+systemctl start sshd
+systemctl enable sshd
+systemctl status sshd
+
+(Windows terminal)
+
+ssh fred@192.168.100.168
+(Aquí pide contraseña)
+
+ls (demostrando el uso de ssh)
+rm authorized keys 
+touch 20252175.txt
+exit
+
+ssh-keygen
+notepad users\mkm26/ .ssh/id_ed25519.pub
+(Copiar la llave publica)
+
+
+(CentOS terminal)
+
+exit(salir del modo root)
+mkdir .ssh
+cd .ssh
+sudo nano authorized_keys
+(pegamos la llave publica)
+ctrl + o (guardar)
+enter 
+ctrl + x (Salir)
+
+(Windows terminal)
+ssh fred@192.168.100.168
+(Ya no nos pide contraseña)
+
+
+
+
+
+
+
+
+============================================
