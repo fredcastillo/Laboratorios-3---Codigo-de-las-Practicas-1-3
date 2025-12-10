@@ -1,3 +1,207 @@
+# ================================
+# 🧩 MÓDULO 3 — Discos, Particiones y Montajes (CentOS Stream 10)
+# ================================
+
+
+# ============================================================
+# PRACTICA 1 — Ver Discos, Crear Partición y Formatear EXT4
+# ============================================================
+
+# #1 — Ver discos conectados
+sudo su
+lsblk
+
+# #2 — Crear partición en /dev/sdb
+fdisk /dev/sdb
+m
+n
+w
+
+# #3 — Formatear partición en EXT4
+mkfs.ext4 /dev/sdb1
+
+# #4 — Crear carpeta y montar
+mkdir /home/usuario/Desktop/Fred1
+mount /dev/sdb1 /home/usuario/Desktop/Fred1
+cd /home/usuario/Desktop/Fred1
+touch "Adrián Alcántara.txt"
+
+# #5 — Desmontar y montar en /mnt
+umount /dev/sdb1
+mount /dev/sdb1 /mnt
+cd /mnt
+
+
+# -------------------------
+# ❗ NOTAS, ERRORES Y SOLUCIONES (Práctica 1)
+# -------------------------
+
+❗ Nota 1 — El disco no aparece en lsblk  
+- Solución: Reiniciar la VM o reconectar el disco virtual.
+
+❗ Nota 2 — fdisk no deja modificar el disco  
+- Solución:
+  umount /dev/sdb1
+
+❗ Nota 3 — mkfs.ext4 falla  
+- Causa: La partición está dañada
+- Solución:
+  wipefs -a /dev/sdb
+
+❗ Nota 4 — La carpeta no existe realmente  
+- Asegurarse que usas la ruta completa correcta del usuario:
+  /home/usuario/Desktop/Fred1
+
+❗ Nota 5 — El archivo no aparece en /mnt  
+- Verificar con:
+  ls /mnt
+
+
+# -------------------------
+# 📘 TÉRMINOS IMPORTANTES (Práctica 1)
+# -------------------------
+
+lsblk: Comando para ver discos conectados y particiones.  
+fdisk: Herramienta para crear y administrar particiones.  
+ext4: Sistema de archivos moderno y estable usado en Linux.  
+mkfs.ext4: Formatea una partición en formato EXT4.  
+mount: Conecta una partición a una carpeta.  
+umount: Desmonta una partición.  
+/mnt: Carpeta estándar para montajes temporales.
+
+
+# ============================================================
+# PRACTICA 2 — Crear, Eliminar y Reparar Particiones
+# ============================================================
+Crea el disco desde las configuraciones de la maquina en VMWARE
+# #1 — Ver discos
+sudo su
+lsblk
+
+# #2 — Entrar a fdisk en /dev/sdb
+fdisk /dev/sdb
+d
+n
+w
+
+# #3 — Formatear de nuevo
+mkfs.ext4 /dev/sdb1
+
+# #4 — Montar en /mnt/disco2
+mkdir /mnt/disco2
+mount /dev/sdb1 /mnt/disco2
+cd /mnt/disco2
+
+# #5 — Crear archivo de prueba
+touch "Archivo_de_prueba.txt"
+
+
+# -------------------------
+# ❗ NOTAS, ERRORES Y SOLUCIONES (Práctica 2)
+# -------------------------
+
+❗ Nota 1 — d no borra la partición  
+- Varios discos pueden estar montados  
+- Solución:
+  umount /dev/sdb1
+
+❗ Nota 2 — Nuevo número de partición  
+- fdisk puede preguntar número  
+- Solo presiona Enter
+
+❗ Nota 3 — "device is busy"  
+- Solución:
+  fuser -v /dev/sdb1
+  umount /dev/sdb1
+
+❗ Nota 4 — No puedes montar en /mnt/disco2  
+- Crear la carpeta:
+  mkdir /mnt/disco2
+
+
+# -------------------------
+# 📘 TÉRMINOS IMPORTANTES (Práctica 2)
+# -------------------------
+
+d (delete): Borra una partición dentro de fdisk.  
+n (new): Crea una partición.  
+w (write): Guarda los cambios.  
+fuser: Muestra qué procesos están usando un disco.  
+Montaje persistente: Montaje que se mantiene al reiniciar (usando /etc/fstab).
+
+
+# ============================================================
+# PRACTICA 3 — Verificar Persistencia y Configurar Autómatas de Montaje
+# ============================================================
+
+# #1 — Verificar estado del disco
+sudo su
+lsblk
+mount | grep sdb1
+
+# #2 — Editar fstab para montar automáticamente
+nano /etc/fstab
+
+# (dentro del archivo se agrega)
+# /dev/sdb1   /mnt/disco2   ext4   defaults   0 0
+
+# #3 — Probar que fstab funciona
+umount /dev/sdb1
+mount -a
+ls /mnt/disco2
+
+# #4 — Reiniciar y verificar persistencia
+reboot
+
+# #5 — Verificar montaje al iniciar
+lsblk
+ls /mnt/disco2
+
+
+# -------------------------
+# ❗ NOTAS, ERRORES Y SOLUCIONES (Práctica 3)
+# -------------------------
+
+❗ Nota 1 — "mount: wrong fs type"  
+- Causa: fstab mal escrito  
+- Solución:
+  Revisar que el campo exacto sea:
+  /dev/sdb1   /mnt/disco2   ext4   defaults   0 0
+
+❗ Nota 2 — El sistema no arranca por error en fstab  
+- Solución desde la consola de emergencia:
+  mount -o remount,rw /
+  nano /etc/fstab
+  corregir el error
+
+❗ Nota 3 — No monta al reiniciar  
+- Solución:
+  systemctl daemon-reload
+  mount -a
+
+❗ Nota 4 — "target is busy"  
+- Solución:
+  fuser -mv /mnt/disco2
+  umount /mnt/disco2
+
+
+# -------------------------
+# 📘 TÉRMINOS IMPORTANTES (Práctica 3)
+# -------------------------
+
+fstab: Archivo donde se definen montajes automáticos.  
+mount -a: Monta todos los dispositivos definidos en fstab.  
+defaults: Parámetros estándar para montajes ext4.  
+Persistencia: Que el montaje sobreviva a un reinicio.  
+Consola de emergencia: Modo de reparación cuando fstab falla.
+
+
+
+
+------- - version 1 - ------------
+❗ Nota: Version original utilizada para la elaboracion de los videos y practicas, pero menos descriptiva
+dejada aqui para referencia.
+
 Comandos usados practica 1
 
 (En la terminal)
@@ -122,3 +326,4 @@ ssh fred@192.168.100.168
 
 
 ============================================
+
